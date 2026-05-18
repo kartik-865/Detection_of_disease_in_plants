@@ -89,19 +89,6 @@ After training, the model weights and evaluation logs are saved to a designated 
 
 ---
 
-## Future Work
-
-There are several directions in which this project can be extended:
-
-- **Multi-label classification**: Support for plants exhibiting more than one disease simultaneously
-- **Mobile deployment**: Export the model to TensorFlow Lite or ONNX format for deployment on mobile or edge devices for in-field use
-- **Web application**: Build a simple web interface using Flask or FastAPI so farmers can upload images directly from a browser
-- **Extended plant coverage**: Train on additional crop species and disease types beyond what PlantVillage contains
-- **Real-time detection**: Integrate object detection (e.g., YOLOv8) for bounding-box localization of diseased regions within the leaf
-- **Explainability**: Add Grad-CAM or similar visualization techniques to help users understand which regions of the image drove the prediction
-
----
-
 ## License
 
 This project is licensed under the **MIT License**. You are free to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of this software, provided the original copyright notice is retained.
