@@ -1,3 +1,5 @@
+Deployment link : https://detection-of-disease-in-plants.vercel.app/
+
 # Detection of Disease in Plants
 
 A deep learning-based system for automated identification and classification of plant diseases from leaf images. This project leverages convolutional neural networks to provide accurate, rapid disease diagnosis, offering a scalable alternative to traditional expert-dependent inspection methods.
