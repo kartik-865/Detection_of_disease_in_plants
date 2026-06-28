@@ -107,7 +107,7 @@ const SAMPLES = [
 // ─── Config ───────────────────────────────────────────────────────────────────
 // 🔧 DEPLOY: After deploying the backend to Render, replace the URL below
 //    with your Render backend URL (e.g. 'https://plant-disease-api.onrender.com')
-const BACKEND_URL = 'https://YOUR-RENDER-APP.onrender.com';
+const BACKEND_URL = 'https://detection-of-disease-in-plants.onrender.com';
 
 const API_BASE_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
   ? 'http://localhost:8000'
