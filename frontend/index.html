@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LeafScan — Plant Disease Detection</title>
+  <meta name="description" content="AI-powered plant disease detection using deep learning on the PlantVillage dataset. Upload a leaf image to identify diseases and get care recommendations instantly." />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌿</text></svg>" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<!-- ═══════════════════════ HEADER ═══════════════════════════════════════════ -->
+<header>
+  <div class="container">
+    <div class="header-container">
+
+      <a class="logo" href="#">
+        <div class="logo-icon">🌿</div>
+        <span class="logo-text">Leaf<span>Scan</span></span>
+      </a>
+
+      <nav class="nav-tabs" role="tablist">
+        <button class="tab-btn active" id="tab-diagnose-btn" data-tab="tab-diagnose" role="tab" aria-selected="true">
+          🔬 Diagnose
+        </button>
+        <button class="tab-btn" id="tab-metrics-btn" data-tab="tab-metrics" role="tab" aria-selected="false">
+          📊 Model Metrics
+        </button>
+        <button class="tab-btn" id="tab-about-btn" data-tab="tab-about" role="tab" aria-selected="false">
+          ℹ️ About
+        </button>
+      </nav>
+
+    </div>
+  </div>
+</header>
+
+<main class="container">
+
+  <!-- ══════════════════ TAB 1 — DIAGNOSE ══════════════════════════════════ -->
+  <section id="tab-diagnose" class="tab-content active" role="tabpanel">
+
+    <div class="dashboard-grid">
+
+      <!-- Left: Upload & Samples ─────────────────────────────────────────── -->
+      <div class="card">
+        <h2 style="font-size:22px; margin-bottom:6px;">Upload a Leaf Image</h2>
+        <p style="color:var(--text-muted); font-size:14px; margin-bottom:24px;">
+          Drag &amp; drop a photo of a plant leaf, or choose one of the sample leaves below.
+        </p>
+
+        <!-- Drop zone -->
+        <div class="upload-zone" id="upload-zone" role="button" tabindex="0" aria-label="Upload leaf image">
+          <div class="upload-icon">📷</div>
+          <p class="upload-text">Drop your leaf image here</p>
+          <p class="upload-subtext">or click to browse — JPG, PNG, WEBP</p>
+        </div>
+        <input type="file" id="file-input" accept="image/*" aria-label="File input" />
+
+        <!-- Image preview with scan animation -->
+        <div class="preview-container" id="preview-container">
+          <img class="preview-image" id="preview-image" src="" alt="Uploaded leaf preview" />
+          <div class="scan-bar" id="scan-bar"></div>
+          <div class="scan-overlay" id="scan-overlay"></div>
+        </div>
+
+        <!-- Action buttons -->
+        <div class="btn-group">
+          <button class="btn btn-primary" id="analyze-btn" disabled>🔬 Analyse</button>
+          <button class="btn btn-secondary" id="clear-btn">✕ Clear</button>
+        </div>
+
+        <!-- Sample leaves -->
+        <div class="sample-section">
+          <p class="sample-title">Or try a quick sample:</p>
+          <div class="sample-grid" id="sample-grid"></div>
+        </div>
+      </div>
+
+      <!-- Right: Results Card ─────────────────────────────────────────────── -->
+      <div class="card results-card">
+        <h2 style="font-size:22px; margin-bottom:20px;">Diagnosis Result</h2>
+
+        <!-- Empty state -->
+        <div class="empty-state" id="empty-state" style="display:flex; flex-direction:column; align-items:center;">
+          <div class="empty-icon">🍃</div>
+          <p style="font-weight:600; font-size:15px; color:var(--text-main); margin-bottom:6px;">No image analysed yet</p>
+          <p style="font-size:13px;">Upload a leaf photo or select a sample<br>and click <strong>Analyse</strong>.</p>
+        </div>
+
+        <!-- Results area -->
+        <div id="results-area" style="display:none;"></div>
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- ══════════════════ TAB 2 — MODEL METRICS ════════════════════════════ -->
+  <section id="tab-metrics" class="tab-content" role="tabpanel">
+
+    <div class="dashboard-header" style="margin-top: 20px;">
+      <h2>Model Performance Dashboard</h2>
+      <p>Visual breakdown of our CNN trained on the PlantVillage dataset across 38 plant–disease classes.</p>
+    </div>
+
+    <!-- Summary stat cards -->
+    <div class="metrics-summary-grid">
+      <div class="metric-stat-card">
+        <div class="metric-stat-val">38</div>
+        <div class="metric-stat-label">Disease Classes</div>
+        <div class="metric-stat-desc">Across 14 crop species</div>
+      </div>
+      <div class="metric-stat-card">
+        <div class="metric-stat-val">50K+</div>
+        <div class="metric-stat-label">Training Images</div>
+        <div class="metric-stat-desc">PlantVillage dataset</div>
+      </div>
+      <div class="metric-stat-card">
+        <div class="metric-stat-val">≥90%</div>
+        <div class="metric-stat-label">Validation Accuracy</div>
+        <div class="metric-stat-desc">With data augmentation</div>
+      </div>
+      <div class="metric-stat-card">
+        <div class="metric-stat-val">224px</div>
+        <div class="metric-stat-label">Input Resolution</div>
+        <div class="metric-stat-desc">RGB (224 × 224 × 3)</div>
+      </div>
+    </div>
+
+    <!-- Charts grid — click any to open full size -->
+    <div class="plots-grid">
+
+      <div class="plot-card">
+        <div class="plot-image-container" title="Click to zoom">
+          <img src="assets/training_history.png" alt="Training and validation accuracy/loss curves over 10 epochs" loading="lazy" />
+        </div>
+        <div class="plot-body">
+          <h3 class="plot-title">📈 Training History</h3>
+          <p class="plot-desc">Accuracy and loss curves for both training and validation sets across 10 epochs. Converging curves indicate the model is learning without significant overfitting.</p>
+        </div>
+      </div>
+
+      <div class="plot-card">
+        <div class="plot-image-container" title="Click to zoom">
+          <img src="assets/confusion_matrix.png" alt="Confusion matrix heatmap of all 38 disease classes" loading="lazy" />
+        </div>
+        <div class="plot-body">
+          <h3 class="plot-title">🗂️ Confusion Matrix</h3>
+          <p class="plot-desc">Per-class prediction accuracy heatmap. Strong diagonal concentration indicates high precision across all 38 leaf disease categories.</p>
+        </div>
+      </div>
+
+      <div class="plot-card">
+        <div class="plot-image-container" title="Click to zoom">
+          <img src="assets/classification_report.png" alt="Classification report showing precision, recall and F1-score per class" loading="lazy" />
+        </div>
+        <div class="plot-body">
+          <h3 class="plot-title">📋 Classification Report</h3>
+          <p class="plot-desc">Per-class precision, recall, and F1-score. A well-balanced F1 score indicates the model handles both healthy and diseased classes consistently.</p>
+        </div>
+      </div>
+
+      <div class="plot-card">
+        <div class="plot-image-container" title="Click to zoom">
+          <img src="assets/roc_curves.png" alt="ROC curves for multi-class classification" loading="lazy" />
+        </div>
+        <div class="plot-body">
+          <h3 class="plot-title">📉 ROC Curves</h3>
+          <p class="plot-desc">Receiver Operating Characteristic curves per class. AUC values close to 1.0 reflect the model's strong ability to distinguish between classes.</p>
+        </div>
+      </div>
+
+      <div class="plot-card">
+        <div class="plot-image-container" title="Click to zoom">
+          <img src="assets/precision_recall_curves.png" alt="Precision-recall curves for all classes" loading="lazy" />
+        </div>
+        <div class="plot-body">
+          <h3 class="plot-title">🎯 Precision–Recall Curves</h3>
+          <p class="plot-desc">High-precision recall trade-off across classes. Curves near the top-right corner indicate excellent classification performance under class imbalance.</p>
+        </div>
+      </div>
+
+      <div class="plot-card">
+        <div class="plot-image-container" title="Click to zoom">
+          <img src="assets/per_class_accuracy.png" alt="Per-class accuracy bar chart for all 38 disease classes" loading="lazy" />
+        </div>
+        <div class="plot-body">
+          <h3 class="plot-title">📊 Per-Class Accuracy</h3>
+          <p class="plot-desc">Individual class-level accuracy bar chart. Identifies which plant/disease combinations are predicted with highest and lowest reliability.</p>
+        </div>
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- ══════════════════ TAB 3 — ABOUT ════════════════════════════════════ -->
+  <section id="tab-about" class="tab-content" role="tabpanel">
+    <div style="max-width:760px; margin: 30px auto 0; display:flex; flex-direction:column; gap:24px;">
+
+      <div class="card">
+        <h2 style="font-size:24px; margin-bottom:12px;">🌱 About This Project</h2>
+        <p style="color:var(--text-muted); font-size:15px; line-height:1.8;">
+          <strong>Plant Disease Detection</strong> is a deep learning system that classifies plant leaf images into 38 categories spanning 14 crop species, using the <a href="https://www.kaggle.com/datasets/abdallahalidev/plantvillage-dataset" target="_blank" style="color:var(--primary); text-decoration:none; font-weight:500;">PlantVillage dataset</a>.
+          The model is a custom Convolutional Neural Network trained end-to-end with data augmentation to achieve validation accuracy consistently above 90%.
+        </p>
+      </div>
+
+      <div class="card">
+        <h2 style="font-size:20px; margin-bottom:16px;">🧠 Model Architecture</h2>
+        <div style="display:flex; flex-direction:column; gap:12px;">
+          <div style="display:flex; align-items:center; gap:14px; background:var(--primary-light); border-radius:var(--border-radius-sm); padding:14px 18px;">
+            <span style="font-size:22px;">🖼️</span>
+            <div>
+              <div style="font-weight:600; font-size:14px;">Input Layer</div>
+              <div style="font-size:13px; color:var(--text-muted);">Accepts RGB images at 224 × 224 resolution, normalised to [0, 1].</div>
+            </div>
+          </div>
+          <div style="display:flex; align-items:center; gap:14px; background:var(--primary-light); border-radius:var(--border-radius-sm); padding:14px 18px;">
+            <span style="font-size:22px;">🔍</span>
+            <div>
+              <div style="font-weight:600; font-size:14px;">Feature Extraction</div>
+              <div style="font-size:13px; color:var(--text-muted);">4× Conv2D blocks (32→64→64→128 filters) with BatchNorm, MaxPooling, and Dropout (0.2).</div>
+            </div>
+          </div>
+          <div style="display:flex; align-items:center; gap:14px; background:var(--primary-light); border-radius:var(--border-radius-sm); padding:14px 18px;">
+            <span style="font-size:22px;">🎯</span>
+            <div>
+              <div style="font-weight:600; font-size:14px;">Classification Head</div>
+              <div style="font-size:13px; color:var(--text-muted);">Dense(128, relu) → Dense(64, relu) → Dense(38, softmax). Trained with Adam + sparse categorical cross-entropy.</div>
+            </div>
+          </div>
+          <div style="display:flex; align-items:center; gap:14px; background:var(--primary-light); border-radius:var(--border-radius-sm); padding:14px 18px;">
+            <span style="font-size:22px;">🔄</span>
+            <div>
+              <div style="font-weight:600; font-size:14px;">Data Augmentation</div>
+              <div style="font-size:13px; color:var(--text-muted);">Random flipping, rotation, zoom, and brightness adjustments to improve generalisation.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2 style="font-size:20px; margin-bottom:12px;">🌾 Supported Crops</h2>
+        <div style="display:flex; flex-wrap:wrap; gap:10px;">
+          <span style="background:var(--primary-light); color:var(--primary); padding:6px 14px; border-radius:50px; font-size:13px; font-weight:600; display:inline-flex; align-items:center; gap:6px;">🍎 Apple</span>
+          <span style="background:var(--primary-light); color:var(--primary); padding:6px 14px; border-radius:50px; font-size:13px; font-weight:600; display:inline-flex; align-items:center; gap:6px;">🫐 Blueberry</span>
+          <span style="background:var(--primary-light); color:var(--primary); padding:6px 14px; border-radius:50px; font-size:13px; font-weight:600; display:inline-flex; align-items:center; gap:6px;">🍒 Cherry</span>
+          <span style="background:var(--primary-light); color:var(--primary); padding:6px 14px; border-radius:50px; font-size:13px; font-weight:600; display:inline-flex; align-items:center; gap:6px;">🌽 Corn</span>
+          <span style="background:var(--primary-light); color:var(--primary); padding:6px 14px; border-radius:50px; font-size:13px; font-weight:600; display:inline-flex; align-items:center; gap:6px;">🍇 Grape</span>
+          <span style="background:var(--primary-light); color:var(--primary); padding:6px 14px; border-radius:50px; font-size:13px; font-weight:600; display:inline-flex; align-items:center; gap:6px;">🍊 Orange</span>
+          <span style="background:var(--primary-light); color:var(--primary); padding:6px 14px; border-radius:50px; font-size:13px; font-weight:600; display:inline-flex; align-items:center; gap:6px;">🍑 Peach</span>
+          <span style="background:var(--primary-light); color:var(--primary); padding:6px 14px; border-radius:50px; font-size:13px; font-weight:600; display:inline-flex; align-items:center; gap:6px;">🌶️ Pepper</span>
+          <span style="background:var(--primary-light); color:var(--primary); padding:6px 14px; border-radius:50px; font-size:13px; font-weight:600; display:inline-flex; align-items:center; gap:6px;">🥔 Potato</span>
+          <span style="background:var(--primary-light); color:var(--primary); padding:6px 14px; border-radius:50px; font-size:13px; font-weight:600; display:inline-flex; align-items:center; gap:6px;">🍓 Strawberry</span>
+          <span style="background:var(--primary-light); color:var(--primary); padding:6px 14px; border-radius:50px; font-size:13px; font-weight:600; display:inline-flex; align-items:center; gap:6px;">🍅 Tomato</span>
+          <span style="background:var(--primary-light); color:var(--primary); padding:6px 14px; border-radius:50px; font-size:13px; font-weight:600; display:inline-flex; align-items:center; gap:6px;">🥭 Mango</span>
+          <span style="background:var(--primary-light); color:var(--primary); padding:6px 14px; border-radius:50px; font-size:13px; font-weight:600; display:inline-flex; align-items:center; gap:6px;">🌿 Squash</span>
+          <span style="background:var(--primary-light); color:var(--primary); padding:6px 14px; border-radius:50px; font-size:13px; font-weight:600; display:inline-flex; align-items:center; gap:6px;">🫘 Soybean</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2 style="font-size:20px; margin-bottom:12px;">📚 Dataset & License</h2>
+        <p style="font-size:14px; color:var(--text-muted); line-height:1.8;">
+          This project uses the <strong>PlantVillage Dataset</strong> containing 50,000+ expertly-curated leaf images. 
+          The codebase is released under the <strong>MIT License</strong> — free to use, modify, and distribute.
+          Dataset: <a href="https://www.kaggle.com/datasets/abdallahalidev/plantvillage-dataset" target="_blank" style="color:var(--primary); text-decoration:none;">Kaggle — PlantVillage</a>.
+        </p>
+      </div>
+
+    </div>
+  </section>
+
+</main>
+
+<!-- ═══════════════════════ IMAGE MODAL ══════════════════════════════════════ -->
+<div class="modal" id="image-modal" role="dialog" aria-modal="true" aria-label="Full size chart viewer">
+  <button class="modal-close" id="modal-close" aria-label="Close modal">✕</button>
+  <img class="modal-content" id="modal-img" src="" alt="Full size chart" />
+</div>
+
+<!-- ═══════════════════════ FOOTER ═══════════════════════════════════════════ -->
+<footer>
+  <div class="container">
+    <p>🌿 LeafScan — Plant Disease Detection · Built with CNN + PlantVillage Dataset · MIT License</p>
+  </div>
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>
